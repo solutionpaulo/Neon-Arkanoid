@@ -1,0 +1,206 @@
+:root {
+    --bg-color: #0d0221;
+    --primary-color: #00f2ff;
+    --secondary-color: #ff007f;
+    --accent-color: #bc13fe;
+    --text-color: #ffffff;
+    --glass-bg: rgba(255, 255, 255, 0.1);
+    --glass-border: rgba(255, 255, 255, 0.2);
+    --shadow: 0 0 15px rgba(0, 242, 255, 0.5);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Outfit', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    position: relative;
+}
+
+#bg-slideshow {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -2;
+    background-size: cover;
+    background-position: center;
+    transition: background-image 2s ease-in-out;
+}
+
+#bg-slideshow::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at 50% 50%, rgba(13, 2, 33, 0.2) 0%, rgba(13, 2, 33, 0.6) 100%);
+    z-index: -1;
+}
+
+#game-container {
+    width: 90%;
+    max-width: 800px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border);
+    border-radius: 15px;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+#game-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+}
+
+.highlight {
+    color: var(--secondary-color);
+    text-shadow: 0 0 10px var(--secondary-color);
+}
+
+#stats {
+    display: flex;
+    gap: 20px;
+}
+
+.stat-box {
+    font-size: 1rem;
+    font-weight: 400;
+    letter-spacing: 1px;
+}
+
+#score, #lives {
+    color: var(--primary-color);
+    font-weight: 700;
+    text-shadow: 0 0 5px var(--primary-color);
+}
+
+main {
+    position: relative;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    border: 2px solid var(--primary-color);
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 242, 255, 0.2);
+    overflow: hidden;
+}
+
+#gameCanvas {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4/3;
+}
+
+#overlay, #start-screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(13, 2, 33, 0.85);
+    backdrop-filter: blur(8px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+    transition: opacity 0.3s ease;
+}
+
+.hidden {
+    display: none !important;
+    opacity: 0;
+    pointer-events: none;
+}
+
+#overlay-content, #start-content {
+    text-align: center;
+    padding: 40px;
+    border-radius: 20px;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+}
+
+#overlay-title, .logo-large {
+    font-size: 3rem;
+    margin-bottom: 10px;
+    color: var(--primary-color);
+    text-shadow: 0 0 20px var(--primary-color);
+    font-weight: 700;
+}
+
+button {
+    margin-top: 25px;
+    padding: 12px 30px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #fff;
+    background: transparent;
+    border: 2px solid var(--secondary-color);
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+button:hover {
+    background: var(--secondary-color);
+    box-shadow: 0 0 20px var(--secondary-color);
+    transform: scale(1.05);
+}
+
+.icon-btn {
+    margin-top: 0;
+    padding: 5px 10px;
+    font-size: 1.2rem;
+    border-color: var(--primary-color);
+    line-height: 1;
+}
+
+.icon-btn:hover {
+    box-shadow: 0 0 10px var(--primary-color);
+    background: rgba(0, 242, 255, 0.1);
+}
+
+footer {
+    text-align: center;
+    font-size: 0.8rem;
+    opacity: 0.5;
+    letter-spacing: 1px;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+#start-btn {
+    animation: pulse 2s infinite ease-in-out;
+}

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neon Arkanoid | O Desafio Retro</title>
+    <meta name="description" content="Um jogo clássico de Arkanoid reinventado com estética neon e jogabilidade moderna.">
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="bg-slideshow"></div>
+    <div id="game-container">
+        <header>
+            <h1 id="game-title">NEON <span class="highlight">ARKANOID</span></h1>
+            <div id="stats">
+                <div class="stat-box">PONTOS: <span id="score">0</span></div>
+                <div class="stat-box">VIDAS: <span id="lives">3</span></div>
+                <button id="mute-btn" class="icon-btn">🔊</button>
+            </div>
+        </header>
+
+        <main>
+            <canvas id="gameCanvas"></canvas>
+            
+            <div id="overlay" class="hidden">
+                <div id="overlay-content">
+                    <h2 id="overlay-title">GAME OVER</h2>
+                    <p id="overlay-msg">Você foi longe, mas o desafio continua.</p>
+                    <button id="restart-btn">JOGAR NOVAMENTE</button>
+                </div>
+            </div>
+
+            <div id="start-screen">
+                <div id="start-content">
+                    <div class="logo-large">NEON ARKANOID</div>
+                    <p>Use o mouse ou as setas para mover a paleta</p>
+                    <button id="start-btn">INICIAR JOGO</button>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Criado por Antigravity</p>
+        </footer>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>
