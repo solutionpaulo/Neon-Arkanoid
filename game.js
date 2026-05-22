@@ -9,6 +9,7 @@ const startScreen = document.getElementById('start-screen');
 const startBtn = document.getElementById('start-btn');
 const restartBtn = document.getElementById('restart-btn');
 const muteBtn = document.getElementById('mute-btn');
+const levelEl = document.getElementById('level');
 
 // Gerenciador de Sons (Web Audio API)
 class SoundManager {
@@ -86,6 +87,7 @@ canvas.height = 600;
 // Configurações do Jogo
 let score = 0;
 let lives = 3;
+let currentLevel = 0;
 let gameRunning = false;
 let animationId;
 
@@ -209,27 +211,111 @@ class PowerUp {
 }
 
 // Blocos (Bricks)
-const brickRowCount = 5;
-const brickColumnCount = 8;
+let brickRowCount = 5;
+let brickColumnCount = 8;
 const brickWidth = 80;
 const brickHeight = 25;
 const brickPadding = 12;
-const brickOffsetTop = 50;
-const brickOffsetLeft = 35;
-
 let bricks = [];
-const colors = ['#ff007f', '#bc13fe', '#00f2ff', '#7cff01', '#ffea00'];
+const colors = ['#ff007f', '#bc13fe', '#00f2ff', '#7cff01', '#ffea00', '#ff6600', '#ff00ff', '#00ffcc'];
+
+const levels = [
+  { rows: 5, cols: 8, data: [
+      [1,1,1,1,1,1,1,1],
+      [1,1,1,1,1,1,1,1],
+      [1,1,1,1,1,1,1,1],
+      [1,1,1,1,1,1,1,1],
+      [1,1,1,1,1,1,1,1],
+  ]},
+  { rows: 5, cols: 9, data: [
+      [0,0,0,1,1,1,0,0,0],
+      [0,0,1,1,1,1,1,0,0],
+      [0,1,1,1,1,1,1,1,0],
+      [0,0,1,1,1,1,1,0,0],
+      [0,0,0,1,1,1,0,0,0],
+  ]},
+  { rows: 6, cols: 10, data: [
+      [1,0,1,0,1,0,1,0,1,0],
+      [0,1,0,1,0,1,0,1,0,1],
+      [1,0,1,0,1,0,1,0,1,0],
+      [0,1,0,1,0,1,0,1,0,1],
+      [1,0,1,0,1,0,1,0,1,0],
+      [0,1,0,1,0,1,0,1,0,1],
+  ]},
+  { rows: 6, cols: 11, data: [
+      [0,0,0,0,0,1,0,0,0,0,0],
+      [0,0,0,0,1,1,1,0,0,0,0],
+      [0,0,0,1,1,1,1,1,0,0,0],
+      [0,0,1,1,1,1,1,1,1,0,0],
+      [0,1,1,1,1,1,1,1,1,1,0],
+      [1,1,1,1,1,1,1,1,1,1,1],
+  ]},
+  { rows: 6, cols: 8, data: [
+      [1,1,1,1,1,1,1,1],
+      [1,0,0,0,0,0,0,1],
+      [1,0,1,1,1,1,0,1],
+      [1,0,1,0,0,1,0,1],
+      [1,0,1,1,1,1,0,1],
+      [1,0,0,0,0,0,0,1],
+  ]},
+  { rows: 5, cols: 9, data: [
+      [1,1,1,0,0,0,0,0,0],
+      [0,0,1,1,1,1,0,0,0],
+      [0,0,0,0,1,1,1,1,1],
+      [0,0,1,1,1,1,0,0,0],
+      [1,1,1,0,0,0,0,0,0],
+  ]},
+  { rows: 7, cols: 9, data: [
+      [0,0,0,1,1,1,0,0,0],
+      [0,0,1,1,1,1,1,0,0],
+      [0,1,1,0,0,0,1,1,0],
+      [1,1,1,0,0,0,1,1,1],
+      [0,1,1,0,0,0,1,1,0],
+      [0,0,1,1,1,1,1,0,0],
+      [0,0,0,1,1,1,0,0,0],
+  ]},
+  { rows: 6, cols: 10, data: [
+      [1,1,0,0,1,1,0,0,1,1],
+      [1,1,0,0,1,1,0,0,1,1],
+      [0,0,1,1,0,0,1,1,0,0],
+      [0,0,1,1,0,0,1,1,0,0],
+      [1,1,0,0,1,1,0,0,1,1],
+      [1,1,0,0,1,1,0,0,1,1],
+  ]},
+  { rows: 6, cols: 8, data: [
+      [1,0,1,0,1,0,1,0],
+      [1,0,1,0,1,0,1,0],
+      [1,0,1,0,1,0,1,0],
+      [1,0,1,0,1,0,1,0],
+      [1,0,1,0,1,0,1,0],
+      [1,0,1,0,1,0,1,0],
+  ]},
+  { rows: 8, cols: 10, data: [
+      [1,1,1,1,1,1,1,1,1,1],
+      [1,1,1,1,1,1,1,1,1,1],
+      [1,1,1,1,1,1,1,1,1,1],
+      [1,1,1,1,1,1,1,1,1,1],
+      [1,1,1,1,1,1,1,1,1,1],
+      [1,1,1,1,1,1,1,1,1,1],
+      [1,1,1,1,1,1,1,1,1,1],
+      [1,1,1,1,1,1,1,1,1,1],
+  ]},
+];
 
 function initBricks() {
+    const lv = levels[currentLevel];
+    brickRowCount = lv.rows;
+    brickColumnCount = lv.cols;
     bricks = [];
     for (let c = 0; c < brickColumnCount; c++) {
         bricks[c] = [];
         for (let r = 0; r < brickRowCount; r++) {
+            const active = lv.data[r][c];
             bricks[c][r] = { 
                 x: 0, 
                 y: 0, 
-                status: 1, 
-                color: colors[r] 
+                status: active,
+                color: active ? colors[r % colors.length] : null
             };
         }
     }
@@ -273,11 +359,15 @@ function drawPaddle() {
 }
 
 function drawBricks() {
+    const totalWidth = brickColumnCount * (brickWidth + brickPadding) - brickPadding;
+    const offsetLeft = (canvas.width - totalWidth) / 2;
+    const offsetTop = 40;
+    
     for (let c = 0; c < brickColumnCount; c++) {
         for (let r = 0; r < brickRowCount; r++) {
             if (bricks[c][r].status === 1) {
-                const brickX = c * (brickWidth + brickPadding) + brickOffsetLeft;
-                const brickY = r * (brickHeight + brickPadding) + brickOffsetTop;
+                const brickX = c * (brickWidth + brickPadding) + offsetLeft;
+                const brickY = r * (brickHeight + brickPadding) + offsetTop;
                 bricks[c][r].x = brickX;
                 bricks[c][r].y = brickY;
                 
@@ -316,9 +406,13 @@ function collisionDetection() {
                             powerUps.push(new PowerUp(b.x + brickWidth/2, b.y, type));
                         }
 
-                        // Verificar Vitória
-                        if (score === brickRowCount * brickColumnCount * 10) {
-                            endGame(true);
+                        // Verificar conclusão da fase
+                        if (areAllBricksDestroyed()) {
+                            if (currentLevel < levels.length - 1) {
+                                levelComplete();
+                            } else {
+                                endGame(true);
+                            }
                         }
                     }
                 });
@@ -394,13 +488,42 @@ function resetBalls() {
     powerUps = [];
 }
 
+function areAllBricksDestroyed() {
+    for (let c = 0; c < brickColumnCount; c++) {
+        for (let r = 0; r < brickRowCount; r++) {
+            if (bricks[c][r].status === 1) return false;
+        }
+    }
+    return true;
+}
+
+function levelComplete() {
+    gameRunning = false;
+    cancelAnimationFrame(animationId);
+    overlayTitle.innerText = `FASE ${currentLevel + 1} CONCLUÍDA!`;
+    overlayTitle.style.color = '#7cff01';
+    overlayMsg.innerText = `Prepare-se para a Fase ${currentLevel + 2}...`;
+    overlay.classList.remove('hidden');
+    sounds.playWin();
+
+    setTimeout(() => {
+        currentLevel++;
+        levelEl.innerText = currentLevel + 1;
+        initBricks();
+        resetBalls();
+        overlay.classList.add('hidden');
+        gameRunning = true;
+        update();
+    }, 2500);
+}
+
 function endGame(win) {
     gameRunning = false;
     cancelAnimationFrame(animationId);
     overlay.classList.remove('hidden');
     overlayTitle.innerText = win ? 'VITÓRIA!' : 'GAME OVER';
     overlayTitle.style.color = win ? '#7cff01' : '#ff007f';
-    overlayMsg.innerText = win ? `Incrível! Você limpou o campo com ${score} pontos.` : `Você marcou ${score} pontos. Tente novamente!`;
+    overlayMsg.innerText = win ? `Incrível! Você zerou o jogo com ${score} pontos.` : `Você marcou ${score} pontos. Tente novamente!`;
     
     if (win) sounds.playWin();
     else sounds.playGameOver();
@@ -459,8 +582,10 @@ function startGame() {
     sounds.init();
     score = 0;
     lives = 3;
+    currentLevel = 0;
     scoreEl.innerText = score;
     livesEl.innerText = lives;
+    levelEl.innerText = 1;
     initBricks();
     resetBalls();
     gameRunning = true;
