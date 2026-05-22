@@ -81,8 +81,8 @@ class SoundManager {
 const sounds = new SoundManager();
 
 // Ajustar resolução do canvas
-canvas.width = 800;
-canvas.height = 600;
+canvas.width = 960;
+canvas.height = 540;
 
 // Configurações do Jogo
 let score = 0;
@@ -97,7 +97,7 @@ const paddle = {
     originalWidth: 120,
     height: 15,
     x: (canvas.width - 120) / 2,
-    y: canvas.height - 30,
+    y: canvas.height - 35,
     speed: 8,
     dx: 0,
     color: '#00f2ff',
@@ -108,7 +108,7 @@ const paddle = {
 // Bolas (Suporte a múltiplas)
 let balls = [{
     x: canvas.width / 2,
-    y: canvas.height - 45,
+    y: canvas.height - 55,
     radius: 8,
     speed: 5,
     dx: 4,
@@ -242,13 +242,13 @@ const levels = [
       [1,0,1,0,1,0,1,0,1,0],
       [0,1,0,1,0,1,0,1,0,1],
   ]},
-  { rows: 6, cols: 11, data: [
-      [0,0,0,0,0,1,0,0,0,0,0],
-      [0,0,0,0,1,1,1,0,0,0,0],
-      [0,0,0,1,1,1,1,1,0,0,0],
-      [0,0,1,1,1,1,1,1,1,0,0],
-      [0,1,1,1,1,1,1,1,1,1,0],
-      [1,1,1,1,1,1,1,1,1,1,1],
+  { rows: 6, cols: 10, data: [
+      [0,0,0,0,1,1,0,0,0,0],
+      [0,0,0,1,1,1,1,0,0,0],
+      [0,0,1,1,1,1,1,1,0,0],
+      [0,1,1,1,1,1,1,1,1,0],
+      [1,1,1,1,1,1,1,1,1,1],
+      [0,1,1,1,1,1,1,1,1,0],
   ]},
   { rows: 6, cols: 8, data: [
       [1,1,1,1,1,1,1,1],
@@ -361,7 +361,7 @@ function drawPaddle() {
 function drawBricks() {
     const totalWidth = brickColumnCount * (brickWidth + brickPadding) - brickPadding;
     const offsetLeft = (canvas.width - totalWidth) / 2;
-    const offsetTop = 40;
+    const offsetTop = 25;
     
     for (let c = 0; c < brickColumnCount; c++) {
         for (let r = 0; r < brickRowCount; r++) {
@@ -475,7 +475,7 @@ function moveBalls() {
 function resetBalls() {
     balls = [{
         x: canvas.width / 2,
-        y: canvas.height - 45,
+        y: canvas.height - 55,
         radius: 8,
         speed: 5,
         dx: 4,
