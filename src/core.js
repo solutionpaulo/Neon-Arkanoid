@@ -175,6 +175,13 @@ function destroyBrick(b, c, r) {
         emitBrickParticles(cx, cy, b.color, 10 + combo.multiplier * 3);
     }
 
+    // Power-up drop
+    if (Math.random() < 0.25) {
+        const types = Object.keys(powerUpTypes);
+        const type = types[Math.floor(Math.random() * types.length)];
+        powerUps.push(new PowerUp(cx, cy, type));
+    }
+
     sounds.playBrick();
     const label = combo.multiplier > 1 ? `${pts} (${combo.multiplier}x)` : `${pts}`;
     addFloatingText(cx + (Math.random() - 0.5) * 20, cy, label, b.color);
@@ -235,7 +242,10 @@ function areAllBricksDestroyed() {
 
 // ==================== Game Logic ====================
 function moveBalls() {
-    balls = balls.filter(ball => {
+    const alive = [];
+    const prevBalls = balls;
+
+    for (const ball of prevBalls) {
         ball.trail.push({ x: ball.x, y: ball.y });
         if (ball.trail.length > 10) ball.trail.shift();
         ball.x += ball.dx;
@@ -254,17 +264,19 @@ function moveBalls() {
         }
 
         if (ball.y + ball.radius > CANVAS_HEIGHT) {
-            if (balls.length > 1) return false;
+            if (prevBalls.length > 1) continue; // remove this ball, keep others
             lives--;
             livesEl.innerText = lives;
             triggerShake(12);
             triggerFlash('#ff007f', 0.4);
-            if (lives === 0) { endGame(false); return true; }
+            if (lives === 0) { endGame(false); alive.push(ball); break; }
             resetBalls();
-            return true;
+            return; // resetBalls() already replaced `balls`, exit early
         }
-        return true;
-    });
+        alive.push(ball);
+    }
+
+    balls = alive;
 }
 
 function movePaddle() {
