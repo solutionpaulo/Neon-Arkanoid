@@ -2,7 +2,7 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Neon Arkanoid | O Desafio Retro</title>
     <meta name="description" content="Um jogo clássico de Arkanoid reinventado com estética neon e jogabilidade moderna.">
     <link rel="stylesheet" href="style.css">
@@ -11,7 +11,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div id="bg-slideshow"></div>
     <div id="game-container">
         <header>
             <h1 id="game-title">NEON <span class="highlight">ARKANOID</span></h1>
@@ -26,11 +25,24 @@
 
         <main>
             <canvas id="gameCanvas"></canvas>
-            
+
             <div id="overlay" class="hidden">
                 <div id="overlay-content">
                     <h2 id="overlay-title">GAME OVER</h2>
                     <p id="overlay-msg">Você foi longe, mas o desafio continua.</p>
+
+                    <div id="highscore-form">
+                        <div id="highscore-save-container" class="hidden">
+                            <div id="hs-name-container" class="hidden">
+                                <p class="hs-label">NOVO RECORDE!</p>
+                                <input type="text" id="hs-name" maxlength="10" placeholder="DIGITE SEU NOME" autocomplete="off">
+                                <button id="hs-save" class="hs-btn">SALVAR</button>
+                            </div>
+                            <h3 id="hs-section-title">RECORDES</h3>
+                            <ol id="hs-list"></ol>
+                        </div>
+                    </div>
+
                     <button id="restart-btn">JOGAR NOVAMENTE</button>
                 </div>
             </div>
@@ -38,8 +50,13 @@
             <div id="start-screen">
                 <div id="start-content">
                     <div class="logo-large">NEON ARKANOID</div>
-                    <p>Use o mouse ou as setas para mover a paleta</p>
+                    <p>Use o mouse, touch ou setas para mover a paleta<br>
+                    <span class="sub">Espaço/clique para atirar laser • ESC para pausar</span></p>
                     <button id="start-btn">INICIAR JOGO</button>
+                    <div id="start-highscores">
+                        <h3>RECORDES</h3>
+                        <ol id="start-hs-list"></ol>
+                    </div>
                 </div>
             </div>
         </main>
@@ -48,6 +65,10 @@
             <p>Criado por Antigravity</p>
         </footer>
     </div>
-    <script src="game.js"></script>
+    <script src="src/sound.js"></script>
+    <script src="src/entities.js"></script>
+    <script src="src/effects.js"></script>
+    <script src="src/highscore.js"></script>
+    <script src="src/core.js"></script>
 </body>
 </html>
