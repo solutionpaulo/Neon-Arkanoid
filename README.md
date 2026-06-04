@@ -5,17 +5,24 @@ Um jogo clássico de Arkanoid reinventado com estética neon e jogabilidade mode
 ## 🎮 Como Jogar
 
 - **Mouse**: Movimente a paleta horizontalmente
+- **Touch**: Arraste o dedo na tela para mover a paleta (mobile)
 - **Teclado**: Setas ← → para mover a paleta
 - **Objetivo**: Destrua todos os blocos sem deixar a bola cair
+- **Combo**: Acertos consecutivos sem a bola tocar na paleta multiplicam seus pontos!
 
 ## ✨ Funcionalidades
 
 - Efeitos visuais neon com brilho e rastros
+- **Sistema de partículas** com física, gravidade e fade em cada colisão
+- **Screen shake** + flash de tela em eventos impactantes
+- **Sistema de Combo** — acertos consecutivos multiplicam a pontuação (até 5x+)
 - Power-ups: Expandir paleta, Multi-ball, Desacelerar bola
 - Trilha sonora e efeitos sonoros (Web Audio API)
 - Slideshow de fundo com paisagens
-- Sistema de pontuação e vidas
+- Sistema de pontuação e vidas com bônus por combo
+- 10 fases com layouts únicos
 - Tela de início e game over
+- **Controles touch** para dispositivos móveis
 
 ## 🛠️ Tecnologias
 
