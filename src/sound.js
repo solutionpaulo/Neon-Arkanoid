@@ -2,9 +2,13 @@ class SoundManager {
     constructor() {
         this.ctx = null;
         this.muted = false;
-        this.bgMusic = new Audio('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3');
-        this.bgMusic.loop = true;
-        this.bgMusic.volume = 0.3;
+        this.currentBg = null;
+        this.bgVolume = 0.3;
+    }
+
+    getLevelTrack(level) {
+        const idx = (level % 16) + 1;
+        return `https://www.soundhelix.com/examples/mp3/SoundHelix-Song-${idx}.mp3`;
     }
 
     init() {
@@ -13,7 +17,7 @@ class SoundManager {
 
     toggleMute() {
         this.muted = !this.muted;
-        this.bgMusic.muted = this.muted;
+        if (this.currentBg) this.currentBg.muted = this.muted;
         const btn = document.getElementById('mute-btn');
         if (btn) btn.innerText = this.muted ? '🔇' : '🔊';
     }
@@ -52,8 +56,23 @@ class SoundManager {
         setTimeout(() => this.playOsc(783.99, 'sine', 0.4, 0.2), 300);
     }
 
-    startMusic() { if (!this.muted) this.bgMusic.play().catch(() => {}); }
-    stopMusic() { this.bgMusic.pause(); this.bgMusic.currentTime = 0; }
+    startMusic(level = 0) {
+        this.stopMusic();
+        if (this.muted) return;
+        const url = this.getLevelTrack(level);
+        this.currentBg = new Audio(url);
+        this.currentBg.loop = true;
+        this.currentBg.volume = this.bgVolume;
+        this.currentBg.play().catch(() => {});
+    }
+
+    stopMusic() {
+        if (this.currentBg) {
+            this.currentBg.pause();
+            this.currentBg.currentTime = 0;
+            this.currentBg = null;
+        }
+    }
 }
 
 const sounds = new SoundManager();

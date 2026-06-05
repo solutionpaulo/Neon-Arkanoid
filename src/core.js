@@ -376,6 +376,7 @@ function levelComplete() {
         resetBalls();
         applyLevelSpeed();
         clearFloatingTexts();
+        sounds.startMusic(currentLevel);
         overlay.classList.add('hidden');
         gameEnding = false;
         gameRunning = true;
@@ -449,7 +450,7 @@ function startGame() {
         document.getElementById('highscore-save-container').classList.add('hidden');
         document.getElementById('hs-name-container').classList.add('hidden');
     }
-    sounds.startMusic();
+    sounds.startMusic(currentLevel);
     update();
 }
 
