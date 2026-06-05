@@ -17,7 +17,8 @@ const paddle = {
     speed: 8, dx: 0,
     color: '#00f2ff', glow: '#00f2ff',
     powerUpTimer: null,
-    laserActive: false, laserUses: 0, laserTimer: null
+    laserActive: false, laserUses: 0, laserTimer: null,
+    autoShootActive: false, autoShootTimer: null
 };
 
 // Brick system
@@ -143,7 +144,8 @@ const powerUpTypes = {
     EXPAND: { color: '#00f2ff', label: 'E', chance: 0.1 },
     MULTI_BALL: { color: '#ffea00', label: 'M', chance: 0.1 },
     SLOW_BALL: { color: '#7cff01', label: 'S', chance: 0.05 },
-    LASER: { color: '#bc13fe', label: 'L', chance: 0.08 }
+    LASER: { color: '#bc13fe', label: 'L', chance: 0.08 },
+    AUTO_SHOT: { color: '#ff4500', label: 'A', chance: 0.08 }
 };
 
 let powerUps = [];
@@ -207,11 +209,22 @@ class PowerUp {
                 paddle.laserUses = 6;
                 paddle.laserTimer = setTimeout(() => { paddle.laserActive = false; }, 12000);
                 break;
+            case 'AUTO_SHOT':
+                if (paddle.autoShootTimer) clearInterval(paddle.autoShootTimer);
+                paddle.autoShootActive = true;
+                paddle.autoShootTimer = setInterval(() => {
+                    if (typeof fireAutoShot === 'function') fireAutoShot();
+                }, 500);
+                setTimeout(() => {
+                    paddle.autoShootActive = false;
+                    if (paddle.autoShootTimer) { clearInterval(paddle.autoShootTimer); paddle.autoShootTimer = null; }
+                }, 10000);
+                break;
         }
     }
 }
 
-// Lasers
+// Lasers (manual)
 let lasers = [];
 
 class Laser {
@@ -237,6 +250,40 @@ class Laser {
         ctx.shadowBlur = 18;
         ctx.shadowColor = '#bc13fe';
         ctx.fillRect(this.x - 1.5, this.y, 3, this.height);
+        ctx.closePath();
+        ctx.shadowBlur = 0;
+    }
+}
+
+// Auto-shots
+let shots = [];
+
+class Shot {
+    constructor(x) {
+        this.x = x; this.y = paddle.y;
+        this.radius = 4;
+        this.speed = 16;
+        this.active = true;
+    }
+
+    update() {
+        this.y -= this.speed;
+        if (this.y < 0) this.active = false;
+    }
+
+    draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        ctx.fillStyle = '#ff4500';
+        ctx.shadowBlur = 14;
+        ctx.shadowColor = '#ff4500';
+        ctx.fill();
+        ctx.closePath();
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, 2, 0, Math.PI * 2);
+        ctx.fillStyle = '#fff';
+        ctx.shadowBlur = 0;
+        ctx.fill();
         ctx.closePath();
         ctx.shadowBlur = 0;
     }

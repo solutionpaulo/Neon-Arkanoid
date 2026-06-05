@@ -230,6 +230,30 @@ function checkLaserCollision() {
     });
 }
 
+function checkShotCollision() {
+    shots.forEach(shot => {
+        if (!shot.active) return;
+        for (let c = 0; c < brickColumnCount; c++) {
+            for (let r = 0; r < brickRowCount; r++) {
+                const b = bricks[c]?.[r];
+                if (!b || !isBrickAlive(b)) continue;
+                if (shot.x + shot.radius > b.x && shot.x - shot.radius < b.x + brickWidth &&
+                    shot.y - shot.radius < b.y + brickHeight && shot.y + shot.radius > b.y) {
+                    if (b.type === BRICK_TYPES.IRON) {
+                        sounds.playClank();
+                        emitBrickParticles(b.x + brickWidth / 2, b.y + brickHeight / 2, '#888', 3);
+                    } else {
+                        destroyBrick(b, c, r);
+                    }
+                    shot.active = false;
+                    break;
+                }
+            }
+            if (!shot.active) break;
+        }
+    });
+}
+
 function areAllBricksDestroyed() {
     for (let c = 0; c < brickColumnCount; c++) {
         for (let r = 0; r < brickRowCount; r++) {
@@ -285,14 +309,22 @@ function movePaddle() {
     if (paddle.x + paddle.width > CANVAS_WIDTH) paddle.x = CANVAS_WIDTH - paddle.width;
 }
 
+function clearPowerUps() {
+    if (paddle.powerUpTimer) { clearTimeout(paddle.powerUpTimer); paddle.powerUpTimer = null; }
+    if (paddle.laserTimer) { clearTimeout(paddle.laserTimer); paddle.laserTimer = null; }
+    if (paddle.autoShootTimer) { clearInterval(paddle.autoShootTimer); paddle.autoShootTimer = null; }
+    paddle.laserActive = false;
+    paddle.autoShootActive = false;
+    powerUps = [];
+    lasers = [];
+    shots = [];
+}
+
 function resetBalls() {
     balls = [createBall(CANVAS_WIDTH / 2, CANVAS_HEIGHT - 55)];
     paddle.x = (CANVAS_WIDTH - paddle.width) / 2;
     paddle.width = paddle.originalWidth;
-    if (paddle.powerUpTimer) clearTimeout(paddle.powerUpTimer);
-    paddle.laserActive = false;
-    powerUps = [];
-    lasers = [];
+    clearPowerUps();
     resetCombo();
 }
 
@@ -303,6 +335,12 @@ function fireLaser() {
     paddle.laserUses--;
     sounds.playLaser();
     if (paddle.laserUses <= 0) paddle.laserActive = false;
+}
+
+function fireAutoShot() {
+    if (!paddle.autoShootActive || !gameRunning || paused) return;
+    const cx = paddle.x + paddle.width / 2;
+    [-18, 0, 18].forEach(off => shots.push(new Shot(cx + off)));
 }
 
 function getLevelBallSpeed() { return 5 + Math.floor(currentLevel / 3); }
@@ -371,6 +409,8 @@ function endGame(win) {
         triggerFlash('#ff007f', 0.5);
     }
     sounds.stopMusic();
+    clearPowerUps();
+    resetCombo();
 
     // High score
     const hsForm = document.getElementById('highscore-form');
@@ -397,8 +437,7 @@ function startGame() {
     levelEl.innerText = '1';
     clearParticles();
     clearFloatingTexts();
-    powerUps = [];
-    lasers = [];
+    clearPowerUps();
     canvas.style.cursor = 'none';
     initBricks();
     resetBalls();
@@ -449,6 +488,7 @@ function update() {
     balls.forEach(drawBall);
     drawPaddle();
     drawLasers();
+    shots.forEach(s => s.draw());
     particles.forEach(p => p.draw());
 
     floatingTexts.forEach(ft => {
@@ -484,13 +524,28 @@ function update() {
         lasers.forEach(l => l.update());
         checkLaserCollision();
         lasers = lasers.filter(l => l.active);
-        // Show remaining uses
+    } else {
+        lasers = [];
+    }
+
+    if (paddle.autoShootActive) {
+        shots.forEach(s => s.update());
+        checkShotCollision();
+        shots = shots.filter(s => s.active);
+    } else {
+        shots = [];
+    }
+
+    // Paddle visual
+    if (paddle.laserActive) {
         paddle.color = '#bc13fe';
         paddle.glow = '#bc13fe';
+    } else if (paddle.autoShootActive) {
+        paddle.color = '#ff4500';
+        paddle.glow = '#ff4500';
     } else {
         paddle.color = '#00f2ff';
         paddle.glow = '#00f2ff';
-        lasers = [];
     }
     moveBalls();
 
